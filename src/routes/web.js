@@ -4,7 +4,7 @@ const HomeController = require('../controllers/HomeController')
 
 let initWebRoute = (app) => {
     router.get('/', HomeController.getHomePage  )
-    router.get('/test', HomeController.test  )
+    
     router.get('/webhooks', HomeController.getWebHook)
     router.post('/messaging-webhook', HomeController.postWebHook)
 
