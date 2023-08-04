@@ -7,7 +7,8 @@ let initWebRoute = (app) => {
     
     router.get('/webhooks', HomeController.getWebHook)
     router.post('/messaging-webhook', HomeController.postWebHook)
-    router.post('/testpost', HomeController.demoPost)
+    router.post('/webhook', HomeController.postwh)
+ 
 
 
     return app.use(router)

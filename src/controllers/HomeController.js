@@ -24,10 +24,10 @@ module.exports = {
           messageData
         )
         .then(response => {
-          console.log('Đã gửi tin nhắn trả lời thành công!');
+          res.send('post success');
         })
         .catch(error => {
-          console.error('Lỗi khi gửi tin nhắn:', error);
+          res.send(error);
         });
       }
       if (body.object === 'page') {
@@ -46,7 +46,9 @@ module.exports = {
         });
         res.status(200).send('EVENT_RECEIVED');
       } else {
-        res.sendStatus(404);
+        console.log(body.object);
+        res.status(404).send('post error'  );
+       
       }
     },
     getWebHook: (req, res) => {
@@ -71,6 +73,18 @@ module.exports = {
      
     demoPost: (req, res) => {
       res.send('post success')
-    }
+    }, 
+    postwh: (req, res) => {
+      let body = req.body;
+
+  console.log(`\u{1F7EA} Received webhook:`);
+  console.dir(body, { depth: null });
+
+  // Check if this is an event from a page subscription
+  if (body.object === "page") {
+    // Returns a '200 OK' response to all requests
+    res.status(200).send("EVENT_RECEIVED"); 
+  }
+    }, 
 
 }
