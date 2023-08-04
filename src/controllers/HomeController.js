@@ -1,23 +1,32 @@
 
 require('dotenv').config();
+const axios = require('axios');
+const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN
 module.exports = {
     getHomePage: (req, res) => {
         return res.render('homepage.ejs')
     },
     postWebHook: (req,res) => {
-        let body = req.body;
+      const body = req.body;
 
-         console.log(`\u{1F7EA} Received webhook:`);
-         console.dir(body, { depth: null });
-         
-    if (body.object === "page") {
+      if (body.object === 'page') {
+        body.entry.forEach(function (entry) {
+          const webhookEvent = entry.messaging[0];
+          const senderId = webhookEvent.sender.id;
+          const message = webhookEvent.message;
     
-    res.status(200).send("EVENT_RECEIVED");
-
-    } else {
+          if (message && message.text) {
+            // Xử lý thông điệp từ khách hàng
+            const receivedText = message.text;
     
-    res.sendStatus(404);
-  }
+            // Gửi tin nhắn trả lời
+            sendMessage(senderId, 'Chào! Bạn vừa nói: ' + receivedText);
+          }
+        });
+        res.status(200).send('EVENT_RECEIVED');
+      } else {
+        res.sendStatus(404);
+      }
     },
     getWebHook: (req, res) => {
         let VERIFY_TOKEN = process.env.VERIFY_TOKEN
@@ -38,11 +47,26 @@ module.exports = {
           }
         }
     },
-    test: (req, res) => {
-        res.json({
-            name: req.query["hub.mode"],
-            
-        })
+     sendMessage: (recipientId, messageText) =>{
+      const messageData = {
+        recipient: {
+          id: recipientId,
+        },
+        message: {
+          text: messageText,
+        },
+      };
+      
+      axios.post(
+        `https://graph.facebook.com/v3.3/me/messages?access_token=${PAGE_ACCESS_TOKEN}`,
+        messageData
+      )
+      .then(response => {
+        console.log('Đã gửi tin nhắn trả lời thành công!');
+      })
+      .catch(error => {
+        console.error('Lỗi khi gửi tin nhắn:', error);
+      });
     }
 
 }
