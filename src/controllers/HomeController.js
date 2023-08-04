@@ -8,7 +8,28 @@ module.exports = {
     },
     postWebHook: (req,res) => {
       const body = req.body;
-
+      function sendMessage(recipientId, messageText) {
+        const messageData = {
+          "field": "messages",
+          recipient: {
+            id: recipientId,
+          },
+          message: {
+            text: messageText,
+          },
+        };
+      
+        axios.post(
+          `https://graph.facebook.com/v3.3/me/messages?access_token=${PAGE_ACCESS_TOKEN}`,
+          messageData
+        )
+        .then(response => {
+          console.log('Đã gửi tin nhắn trả lời thành công!');
+        })
+        .catch(error => {
+          console.error('Lỗi khi gửi tin nhắn:', error);
+        });
+      }
       if (body.object === 'page') {
         body.entry.forEach(function (entry) {
           const webhookEvent = entry.messaging[0];
@@ -47,26 +68,9 @@ module.exports = {
           }
         }
     },
-     sendMessage: (recipientId, messageText) =>{
-      const messageData = {
-        recipient: {
-          id: recipientId,
-        },
-        message: {
-          text: messageText,
-        },
-      };
-      
-      axios.post(
-        `https://graph.facebook.com/v3.3/me/messages?access_token=${PAGE_ACCESS_TOKEN}`,
-        messageData
-      )
-      .then(response => {
-        console.log('Đã gửi tin nhắn trả lời thành công!');
-      })
-      .catch(error => {
-        console.error('Lỗi khi gửi tin nhắn:', error);
-      });
+     
+    demoPost: (req, res) => {
+      res.send('post success')
     }
 
 }
